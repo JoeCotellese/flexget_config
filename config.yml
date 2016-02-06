@@ -1,0 +1,89 @@
+secrets: secrets.yml
+
+schedules:
+  - tasks: 'TV Shows'
+    schedule:
+      minute: "*/3"
+  - tasks: 'Sports'
+    schedule:
+      minute: "*/3"
+  - tasks: 'Movies'
+    schedule:
+      minute: "*/5"
+
+tasks:
+  TV Shows:
+    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=100&categories=8
+    template:
+      - tv
+    download:   ~/torrents/tvshows
+
+  Sports:
+    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-12&showrows=40&categories=7
+    template:
+      - tv
+    download:   ~/torrents/tvshows
+
+  Movies:
+    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=5&categories=16
+    download:   ~/torrents/movies
+    template:
+      - movies
+      - movies_mine
+
+  KidsMovies:
+    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=5&categories=16
+    download:   ~/torrents/family_movies
+    template:
+      - kid_movies
+
+templates:
+  tv:
+    series:
+      720p:
+        - Arrow
+        - Silcon Valley
+        - Veep
+        - The Flash
+        - Game of Thrones
+        - Match of the Day Two
+        - Last Week Tonight with John Oliver
+        - Shark Tank
+        - Star Wars Rebels
+        - Liv and Maddie
+        - The Muppets
+        - The Real Housewives of Atlanta
+        - The Real Housewives of Orange County
+        - Chopped
+        - Sherlock
+        - The X Files
+  movies:
+    imdb:
+      #min_year: 2015
+      min_score: 6.1
+      min_votes: 5000
+      reject_genres:
+        - horror
+    quality: 720p+
+    seen_movies: strict
+
+  kid_movies:
+    imdb:
+      #min_year: 2015
+      min_score: 6.1
+      min_votes: 5000
+      reject_genres:
+        - horror
+      accept_mpaa_ratings:
+        - G
+        - PG
+    quality: 720p+
+    seen_movies: strict
+
+  movies_mine:
+    imdb_list:
+      user_id: ur41320462
+      list: watchlist
+      #min_score: 6.1
+      #min_votes: 5000
+    quality: 720p+
