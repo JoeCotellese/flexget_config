@@ -40,7 +40,7 @@ tasks:
 templates:
   tv:
     series:
-      720p:
+      720p+:
         - Arrow
         - Silcon Valley
         - Veep
@@ -52,11 +52,12 @@ templates:
         - Star Wars Rebels
         - Liv and Maddie
         - The Muppets
-        - The Real Housewives of Atlanta
-        - The Real Housewives of Orange County
         - Chopped
         - Sherlock
         - The X Files
+      hdtv:
+        - The Real Housewives of Atlanta
+        - The Real Housewives of Orange County
   movies:
     imdb:
       #min_year: 2015
