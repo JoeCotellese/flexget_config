@@ -63,7 +63,6 @@ templates:
         - The Flash
         - Game of Thrones
         - Match of the Day Two
-        - Last Week Tonight with John Oliver
         - Shark Tank
         - Star Wars Rebels
         - Liv and Maddie
@@ -71,6 +70,8 @@ templates:
         - Sherlock
         - The X Files
       average:
+        - Full Frontal with Samantha Bee
+        - Last Week Tonight with John Oliver
         - Chopped
         - The Real Housewives of Atlanta
         - The Real Housewives of Orange County
