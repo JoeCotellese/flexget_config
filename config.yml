@@ -13,34 +13,50 @@ schedules:
 
 tasks:
   TV Shows:
-    rss: https://{{secrets.macaroon.url}}/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=100&categories=8
+    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=100&categories=8,48,49
     template:
       - tv
     download:   ~/torrents/tvshows
 
   Sports:
-    rss: https://{{secrets.macaroon.url}}/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-12&showrows=40&categories=7
+    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-12&showrows=40&categories=7
     template:
       - tv
     download:   ~/torrents/tvshows
 
+  KidsMovies:
+    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=5&categories=16
+    download:   ~/torrents/family_movies
+    template:
+      - kid_movies
+
   Movies:
-    rss: https://{{secrets.macaroon.url}}/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=5&categories=16
+    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=5&categories=16
     download:   ~/torrents/movies
     template:
       - movies
       - movies_mine
 
-  KidsMovies:
-    rss: https://{{secrets.macaroon.url}}/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=5&categories=16
-    download:   ~/torrents/family_movies
-    template:
-      - kid_movies
-
 templates:
   tv:
     series:
-      720p+:
+      settings:
+        best:
+          quality: hdtv+ <=720p !10bit
+          target: 720p
+          timeframe: 6 hours
+          propers: 12 hours
+        better:
+          quality: hdtv+ <=720p !10bit
+          target: <720p
+          timeframe: 6 hours
+          propers: 12 hours
+        average:
+          quality: hdtv+ <=720p !10bit
+          target: <720p
+          timeframe: 6 hours
+          propers: 12 hours
+      best:
         - Arrow
         - Silcon Valley
         - Veep
@@ -52,10 +68,10 @@ templates:
         - Star Wars Rebels
         - Liv and Maddie
         - The Muppets
-        - Chopped
         - Sherlock
         - The X Files
-      hdtv:
+      average:
+        - Chopped
         - The Real Housewives of Atlanta
         - The Real Housewives of Orange County
   movies:
@@ -82,6 +98,6 @@ templates:
 
   movies_mine:
     imdb_list:
-      user_id: ur41320462
+      user_id: '{{ secrets.macaroon.imdbid }}'
       list: watchlist
     quality: 720p+
