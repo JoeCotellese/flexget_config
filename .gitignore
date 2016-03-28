@@ -1,0 +1,5 @@
+secrets.yml
+*sqlite
+flexget\.log*
+
+
