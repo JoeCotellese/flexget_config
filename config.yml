@@ -7,98 +7,120 @@ schedules:
   - tasks: 'Sports'
     schedule:
       minute: "*/3"
-  - tasks: 'Movies'
-    schedule:
-      minute: "*/5"
+#  - tasks: 'Movies'
+#    schedule:
+#      minute: "*/5"
+  - tasks: [movie_queue, movie_search]
+    interval:
+      minutes: 15
+  - tasks: [movie_imdb]
+    interval:
+      hours: 2
 
 tasks:
   TV Shows:
-    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=100&categories=8,48,49
+    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=100&categories=47,48,8,9
     template:
       - tv
-    download:   ~/torrents/tvshows
+    download:   ~/Downloads/torrents/tvshows
 
   Sports:
     rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-12&showrows=40&categories=7
     template:
       - tv
-    download:   ~/torrents/tvshows
+    download:   ~/Downloads/torrents/tvshows
 
-  KidsMovies:
-    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=5&categories=16
-    download:   ~/torrents/family_movies
-    template:
-      - kid_movies
+  movie_queue:
+    priority: 1
+    template: movie-queue-request
+    disable: retry_failed
 
-  Movies:
-    rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=5&categories=16
-    download:   ~/torrents/movies
-    template:
-      - movies
-      - movies_mine
+  movie_search:
+    priority: 3
+    template: movie_search_request
 
+  movie_imdb:
+    priority: 2
+    template: imdb_movies
+
+#
 templates:
   tv:
     series:
       settings:
         best:
-          quality: hdtv+ <=720p !10bit
-          target: 720p
-          timeframe: 6 hours
-          propers: 12 hours
+          target: 720p hdtv+
+          quality: <=720p
+          timeframe: 30 minutes
         better:
-          quality: hdtv+ <=720p !10bit
-          target: <720p
-          timeframe: 6 hours
-          propers: 12 hours
+          target: 720p webrip+
+          quality: <=720p
+          timeframe: 30 minutes
         average:
-          quality: hdtv+ <=720p !10bit
           target: <720p
-          timeframe: 6 hours
-          propers: 12 hours
+          #quality: hdtv+ <=720p !10bit
+          timeframe: 30 minutes
+
       best:
         - Arrow
-        - Silcon Valley
+        - Silicon Valley
         - Veep
         - The Flash
         - Game of Thrones
         - Match of the Day Two
+        - The Muppets
+        - Sherlock
+
+      better:
         - Shark Tank
         - Star Wars Rebels
         - Liv and Maddie
-        - The Muppets
-        - Sherlock
-        - The X Files
+
       average:
         - Full Frontal with Samantha Bee
         - Last Week Tonight with John Oliver
         - Chopped
         - The Real Housewives of Atlanta
         - The Real Housewives of Orange County
-  movies:
-    imdb:
-      #min_year: 2015
-      min_score: 6.1
-      min_votes: 5000
-      reject_genres:
-        - horror
-    quality: 720p+
-    seen_movies: strict
 
-  kid_movies:
+  imdb_movies:
     imdb:
-      min_score: 6.1
+      min_score: 7.5
       min_votes: 5000
-      reject_genres:
-        - horror
-      accept_mpaa_ratings:
-        - G
-        - PG
-    quality: 720p+
-    seen_movies: strict
+      accept_languages:
+        - english
+    seen_movies: loose
+    download: ~/Downloads/torrents/movies
+    inputs:
+      - rss: https://blurg.xyz/rss_torrents.php?feed=dl&cat[]=85&cat[]=15&cat[]=24&cat[]=25&pid={{ secrets.blurg.key }}
+      - rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=100&categories=16
 
-  movies_mine:
-    imdb_list:
-      user_id: '{{ secrets.macaroon.imdbid }}'
+  movie:
+    quality:
+      - 720p-1080p
+      - hdtv+
+    movie_queue: accept
+
+  movie-queue-request:
+    accept_all: yes
+    seen: local
+    movie_queue: add
+    letterboxd:
+      username: "JoePa3"
       list: watchlist
-    quality: 720p+
+
+  movie_search_request:
+    template: movie
+    download: ~/Downloads/torrents/movies
+    discover:
+      what:
+        - emit_movie_queue: yes
+      # WHERE TO SEARCH FOR MOVIES. I USE HIGHRES MOVIES
+      # AND QUALITY IS SET IN MOVIE-TEMPLATE. KAT-PLUGIN
+      # IS MODYFIED TO WORK WITH NEW KICKASS.TO ADDRESS
+      # WITH IS https://kat.cr. CHANGE FILE search_kat.py
+      # RSS-FEED IS ONLY HERE TO SHOW IT CAN BE USED.
+      from:
+        - search_rss: https://immortalseed.me/rss.php?secret_key={{ secrets.macaroon.key }}&feedtype=download&timezone=-5&showrows=100&categories=16
+        - search_rss: https://blurg.xyz/rss_torrents.php?feed=dl&cat[]=85&cat[]=15&cat[]=24&cat[]=25&pid={{ secrets.blurg.key }}
+      interval: 1 hour
